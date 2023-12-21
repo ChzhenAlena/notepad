@@ -17,12 +17,12 @@ public class FileManager {
     FileManager(){
         this("src");
     }
-    public ArrayList<Note> readFile() {
+    public List<Note> readFile() {
         if(!file.exists()) {
             System.out.println("Файл заметок не найден, данные не будут загружены");
             return new ArrayList<Note>();
         }
-        ArrayList<Note> notes = new ArrayList<Note>();
+        List<Note> notes = new ArrayList<Note>();
         try(Scanner scanner = new Scanner(file))
         {
             String strDate;
@@ -43,7 +43,7 @@ public class FileManager {
         }
         return notes;
     }
-    public void writeFile(ArrayList<Note> notes) {
+    public void writeFile(List<Note> notes) {
         if(!file.exists()) {
             try
             {

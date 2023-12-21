@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Notepad {
-    private ArrayList<Note> notes;
+    private List<Note> notes;
     FileManager fileManager;
     ConsoleManager consoleManager;
     public void init(){
