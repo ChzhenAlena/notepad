@@ -12,10 +12,10 @@ public class FileManager {
     private File file;
     FileManager(String directory){
         this.directory = new File(directory);
-        file = new File(directory + "/" + "notepad.txt");
+        file = new File(directory + "notepad.txt");
     }
     FileManager(){
-        this("src");
+        this("src\\");
     }
     public List<Note> readFile() {
         if(!file.exists()) {
