@@ -12,62 +12,37 @@ public class FileManager {
     private File file;
     FileManager(String directory){
         this.directory = new File(directory);
-        file = new File(directory + "notepad.txt");
+        file = new File(directory + "notepad.ser");
     }
     FileManager(){
         this("src\\");
     }
     public List<Note> readFile() {
-        if(!file.exists()) {
-            System.out.println("Файл заметок не найден, данные не будут загружены");
-            return new ArrayList<Note>();
-        }
-        List<Note> notes = new ArrayList<Note>();
-        try(Scanner scanner = new Scanner(file))
-        {
-            String strDate;
-            while(scanner.hasNext()){
-                Note note = new Note();
-                strDate = scanner.next() + ' ' + scanner.next();
-                note.setDate(stringToDate(strDate));
-                note.setEmail(scanner.next("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"));
-                note.setTitle(scanner.next());
-                scanner.nextLine();
-                note.setText(scanner.nextLine());
+        List<Note> notes = new ArrayList<>();
+        Note note;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            while(true) {
+                note = (Note) objectInputStream.readObject();
+                System.out.println(note.toString());
                 notes.add(note);
             }
-            //return notes;
+        } catch (EOFException e){
+            return notes;
+        } catch (IOException | ClassNotFoundException e){
+            throw new RuntimeException(e);
         }
-        catch(FileNotFoundException ex){
-            System.out.println(ex.getMessage());
-        }
-        return notes;
     }
     public void writeFile(List<Note> notes) {
-        if(!file.exists()) {
-            try
-            {
-                file.createNewFile();
-            }
-            catch(IOException ex){
-                System.out.println(ex.getMessage());
-            }
-        }
-        try(FileWriter writer = new FileWriter(file, false))
-        {
-            for(Note note : notes){
-                writer.write(dateToString(note.getDate()));
-                writer.append(' ');
-                writer.write(note.getEmail());
-                writer.append(' ');
-                writer.write(note.getTitle());
-                writer.append('\n');
-                writer.write(note.getText());
-                writer.append('\n');
-            }
-        }
-        catch(IOException ex){
-            System.out.println(ex.getMessage());
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            for(Note note : notes)
+                objectOutputStream.writeObject(note);
+            objectOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     private Date stringToDate(String strDate){
@@ -84,4 +59,5 @@ public class FileManager {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyy");
         return dateFormat.format(date);
     }
+
 }
