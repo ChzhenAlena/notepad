@@ -1,9 +1,12 @@
+package models;
+
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Note {
+public class Note implements Serializable {
     private Date date;
     private String email;
     private String title;
