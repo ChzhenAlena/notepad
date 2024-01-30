@@ -1,11 +1,13 @@
+package controlers;
+
+import models.Note;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class FileManager {
     private File directory;
@@ -14,12 +16,21 @@ public class FileManager {
         this.directory = new File(directory);
         file = new File(directory + "notepad.ser");
     }
-    FileManager(){
+    public FileManager(){
         this("src\\");
     }
     public List<Note> readFile() {
         List<Note> notes = new ArrayList<>();
-        Note note;
+        Note note = new Note();
+        if(!file.exists()){
+            try {
+                if(file.createNewFile())
+                    System.out.println("Файл с записями не найден. Был создан новый файл.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return notes;
+        }
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
